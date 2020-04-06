@@ -7,7 +7,7 @@ class TopicJSONRenderer(JSONRenderer):
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
         response = json.dumps({
-                'topic': data
+                'topic': data,
+                'Access-Control-Allow-Origin': '*',
             },ensure_ascii=False)
-        response['Access-Control-Allow-Origin'] = '*'
         return response
