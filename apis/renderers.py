@@ -6,6 +6,8 @@ class TopicJSONRenderer(JSONRenderer):
     charset = 'utf-8'
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
-        return json.dumps({
-            'topic': data
-        },ensure_ascii=False)
+        response = json.dumps({
+                'topic': data
+            },ensure_ascii=False)
+        response['Access-Control-Allow-Origin'] = '*'
+        return response
