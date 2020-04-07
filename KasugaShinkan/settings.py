@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '192.168.32.139',
-    'ec2-3-21-231-184.us-east-2.compute.amazonaws.com',
+    'ec2-18-188-53-245.us-east-2.compute.amazonaws.com',
 ]
 
 
@@ -58,9 +58,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-# CORS_ORIGIN_WHITELIST = [
-#     '*',
-# ]
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_CREDENTIALS = True
