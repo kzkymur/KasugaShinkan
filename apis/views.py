@@ -15,6 +15,19 @@ class TopicApiView(ListAPIView):
     renderer_classes = (TopicJSONRenderer, )
     serializer_class = TopicSerializer
 
+    def get(self, request, format=None):
+        topics = Topic.objects.all()
+        serializer = TopicSerializer(topics, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        print(request.data)
+        serializer = TopicSerializer(data=request.data)
+        if serializer.is_valid():
+            # serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class TopicRetrieveApiView(RetrieveAPIView):
     permission_classes = (AllowAny, )
