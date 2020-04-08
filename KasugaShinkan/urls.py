@@ -22,6 +22,6 @@ from apis import urls
 router = routers.DefaultRouter()
 
 urlpatterns = [
-    url('api/', include(router.urls)),
+    #url('api/', include(router.urls)),
     url('api/', include(urls, namespace='topic')),
 ]
