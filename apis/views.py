@@ -22,10 +22,11 @@ class TopicApiView(ListAPIView):
 
     def post(self, request, format=None):
         print(request.data)
-        print(request.POST)
+        form = request.POST
+        print(form)
         data = {}
-        for key, value in request.POST.items:
-            data[key] = value[0]
+        for key in form.key:
+            data[key] = form[key][0]
         print(data)
         serializer = TopicSerializer(data=data)
         if serializer.is_valid():
