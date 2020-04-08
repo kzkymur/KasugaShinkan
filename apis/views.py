@@ -25,7 +25,7 @@ class TopicApiView(ListAPIView):
         form = request.POST
         print(form)
         data = {}
-        for key in form.key:
+        for key in form.keys():
             data[key] = form[key][0]
         print(data)
         serializer = TopicSerializer(data=data)
