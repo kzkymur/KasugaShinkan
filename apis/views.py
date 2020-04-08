@@ -22,9 +22,12 @@ class TopicApiView(ListAPIView):
 
     def post(self, request, format=None):
         print(request.data)
-        serializer = TopicSerializer(data=request.data)
+        data = {}
+        for key, value in request.data.items:
+            data[key] = value[0]
+        print(data)
+        serializer = TopicSerializer(data=data)
         if serializer.is_valid():
-            # serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
