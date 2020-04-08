@@ -28,6 +28,7 @@ class TopicApiView(ListAPIView):
         form['serial_num'] = int(form['serial_num'])
         serializer = TopicSerializer(data=form)
         if serializer.is_valid():
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
