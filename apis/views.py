@@ -24,6 +24,7 @@ class TopicApiView(ListAPIView):
         form = request.POST
         form._mutable = True
         form['serial_num'] = 0
+        print(form)
         serializer = TopicSerializer(data=form)
         if serializer.is_valid():
             serializer.save()
