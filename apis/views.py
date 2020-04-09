@@ -11,7 +11,7 @@ class Password(ListAPIView):
         if self.check_password(form):
             return_json = {
                 'result': True,
-                'password': KEY,
+                'key': KEY,
             }
         else:
             return_json = {'result': False}
