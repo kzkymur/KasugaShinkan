@@ -29,9 +29,9 @@ class TopicApiView(ListAPIView):
             return serched_topic
         else:
             serialized_topic = self.serializer_class(serched_topic)
-            if serialized_topic.is_valid():
+            try:
                 return Response(serialized_topic.data)
-            else:
+            except:
                 return Response("request form doesn't match any topics", status=status.HTTP_400_BAD_REQUEST)
 
 
