@@ -6,7 +6,7 @@ def password(request):
     return HttpResponse(KEY) if check_password(form) else HttpResponse("invalid password")
 
 def check_password(form):
-    return form['password'] == PASSWORD
+    return form['pass'] == PASSWORD
 
 def check_key(form):
     return form['password'] == KEY

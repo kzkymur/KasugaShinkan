@@ -22,7 +22,6 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         newQuestion = Question(**validated_data)
-        newQuestion.created_at = datetime.datetime.now()
         
         newQuestion.save()
         return newQuestion

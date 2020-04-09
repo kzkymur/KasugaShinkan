@@ -7,7 +7,7 @@ class Topic(models.Model):
     main = models.TextField()
     author = models.CharField(max_length=10)
     youtube_link = models.URLField(blank=True)
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
