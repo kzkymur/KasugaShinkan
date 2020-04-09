@@ -46,7 +46,7 @@ class TopicManageApiView(ListAPIView):
     def get(self, request):
         return Response("this api can't accept GET request", status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, format):
+    def post(self, request, format=None):
         form = request.POST
         form._mutable = True
 
