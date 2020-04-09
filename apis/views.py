@@ -72,9 +72,9 @@ class ManageTopicApiView(ListAPIView):
                     return Response("request doesn't match any topics", status=status.HTTP_400_BAD_REQUEST)
                 return Response("topic '%s' has deleted" % delete_topic['title'], status=status.HTTP_201_CREATED)
             
-            else:
+            #else:
 
-            serializer = self.serializer_class(data=form)
+            #serializer = self.serializer_class(data=form)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
