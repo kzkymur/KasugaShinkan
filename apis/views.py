@@ -62,6 +62,7 @@ class TopicManageApiView(ListAPIView):
                 else:
                     serched_topic.main = form['main']
                     serched_topic.updated_at = datetime.datetime.now()
+                    serched_topic.save()
                     return Response("topic '%s' has updated" % title, status=status.HTTP_201_CREATED)
 
         elif form['category'] in self.topic_categories:
