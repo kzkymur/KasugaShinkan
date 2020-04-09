@@ -113,13 +113,15 @@ class QuestionManageApiView(ListAPIView):
         form = request.POST
         form._mutable = True
         mode = form['mode']
+        print(mode)
         form.pop('mode')
-        if mode == 0:
-            serializer = self.serializer_class(data=form)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if mode == '0':
+            if form['category'] in topic_categories:
+                serializer = self.serializer_class(data=form)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        else:
-            return Response("category isn't in %s" % topic_categories, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response("category isn't in %s" % topic_categories, status=status.HTTP_400_BAD_REQUEST)
