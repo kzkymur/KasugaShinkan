@@ -39,7 +39,7 @@ class TopicApiView(ListAPIView):
 class TopicManageApiView(ListAPIView):
     model = Topic
     permission_classes = (AllowAny, )
-    renderer_classes = (TopicJSONRenderer, )
+    renderer_classes = (ResponseRenderer, )
     serializer_class = TopicSerializer
 
     filtering_elements_at_edit = ['title', 'author']
@@ -97,3 +97,29 @@ class QuestionApiView(ListAPIView):
         else:
             serialized_objs = self.serializer_class(serched_objs)
             return Response(serialized_objs.data)
+
+class QuestionManageApiView(ListAPIView):
+    model = Question
+    permission_classes = (AllowAny, )
+    renderer_classes = (ResponseRenderer, )
+    serializer_class = QuestionSerializer
+
+    filtering_elements_at_edit = ['title', 'author']
+
+    def get(self, request):
+        return Response("this api can't accept GET request", status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, format=None):
+        form = request.POST
+        form._mutable = True
+        mode = form['mode']
+        form.pop('mode')
+        if mode == 0:
+            serializer = self.serializer_class(data=form)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            return Response("category isn't in %s" % topic_categories, status=status.HTTP_400_BAD_REQUEST)
