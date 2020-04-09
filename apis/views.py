@@ -113,7 +113,6 @@ class QuestionManageApiView(ListAPIView):
         form = request.POST
         form._mutable = True
         mode = form['mode']
-        print(mode)
         form.pop('mode')
         if mode == '0':
             if form['category'] in topic_categories:
