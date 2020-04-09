@@ -43,7 +43,7 @@ class TopicManageApiView(ListAPIView):
     topic_categories = ['大学', '生活', '先輩']
     filtering_elements_at_edit = ['title', 'author']
 
-    def get(self):
+    def get(self, request):
         return Response("this api can't accept GET request", status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, format):
