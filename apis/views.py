@@ -3,14 +3,16 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .models import Topic
-from .renderers import TopicJSONRenderer
-from .serializers import TopicSerializer
+from .models import Topic, Question
+from .renderers import TopicJSONRenderer, QuestionJSONRenderer, ResponseRenderer
+from .serializers import TopicSerializer, QuestionSerializer
 
-from .utils import serch_object_from_model
+from .utils import serch_object_from_model, serch_objects_from_model
 
 import datetime
 
+
+topic_categories = ['大学', '生活', '先輩']
 
 class TopicApiView(ListAPIView):
     model = Topic
@@ -21,17 +23,17 @@ class TopicApiView(ListAPIView):
     filtering_elements_at_serch = ['title']
 
     def get(self, request, format=None):
-        topics = self.model.objects.all()
-        serialized_topic = self.serializer_class(topics, many=True)
-        return Response(serialized_topic.data)
+        all_objs = self.model.objects.all()
+        serialized_objs = self.serializer_class(all_objs, many=True)
+        return Response(serialized_objs.data)
 
     def post(self, request, format=None):
-        serched_topic = serch_object_from_model(self.model, request.POST, self.filtering_elements_at_serch)
-        if isinstance(serched_topic, Response):
-            return serched_topic
+        serched_obj = serch_object_from_model(self.model, request.POST, self.filtering_elements_at_serch)
+        if isinstance(serched_obj, Response):
+            return serched_obj
         else:
-            serialized_topic = self.serializer_class(serched_topic)
-            return Response(serialized_topic.data)
+            serialized_obj = self.serializer_class(serched_obj)
+            return Response(serialized_obj.data)
 
 
 class TopicManageApiView(ListAPIView):
@@ -40,7 +42,6 @@ class TopicManageApiView(ListAPIView):
     renderer_classes = (TopicJSONRenderer, )
     serializer_class = TopicSerializer
 
-    topic_categories = ['大学', '生活', '先輩']
     filtering_elements_at_edit = ['title', 'author']
 
     def get(self, request):
@@ -65,11 +66,34 @@ class TopicManageApiView(ListAPIView):
                     serched_topic.save()
                     return Response("topic '%s' has updated" % title, status=status.HTTP_201_CREATED)
 
-        elif form['category'] in self.topic_categories:
+        elif form['category'] in topic_categories:
             serializer = self.serializer_class(data=form)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response("category isn't in %s" % self.topic_categories, status=status.HTTP_400_BAD_REQUEST)
+            return Response("category isn't in %s" % topic_categories, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class QuestionApiView(ListAPIView):
+    model = Question
+    permission_classes = (AllowAny, )
+    renderer_classes = (QuestionJSONRenderer, )
+    serializer_class = QuestionSerializer
+
+    filtering_elements_at_serch = ['category']
+
+    def get(self, request, format=None):
+        all_objs = self.model.objects.all()
+        serialized_objs = self.serializer_class(all_objs, many=True)
+        return Response(serialized_objs.data)
+
+    def post(self, request, format=None):
+        serched_objs = serch_objects_from_model(self.model, request.POST, self.filtering_elements_at_serch)
+        if isinstance(serched_objs, Response):
+            return serched_objs
+        else:
+            serialized_objs = self.serializer_class(serched_objs)
+            return Response(serialized_objs.data)
