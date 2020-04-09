@@ -3,6 +3,9 @@ from django.http import HttpResponse
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 class Password(ListAPIView):
+    def get(self, request):
+        return Response("this api can't accept GET request", status=status.HTTP_400_BAD_REQUEST)
+
     def post(self, request, format=None):
         form = request.POST
         return HttpResponse(KEY) if self.check_password(form) else HttpResponse("invalid password")
