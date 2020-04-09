@@ -1,15 +1,16 @@
 from .PASS import PASSWORD, KEY
 from django.http import HttpResponse
 
-def password(request):
-    form = request.POST
-    return HttpResponse(KEY) if check_password(form) else HttpResponse("invalid password")
+class Password(ListAPIView):
+    def get(self, request):
+        form = request.POST
+        return HttpResponse(KEY) if self.check_password(form) else HttpResponse("invalid password")
 
-def check_password(form):
-    return form['pass'] == PASSWORD
+    def check_password(self, form):
+        return form['pass'] == PASSWORD
 
-def check_key(form):
-    return form['password'] == KEY
+    def check_key(self, form):
+        return form['password'] == KEY
 
 
 from rest_framework import status
