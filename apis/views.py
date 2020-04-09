@@ -1,3 +1,17 @@
+from .PASS import PASSWORD, KEY
+from django.http import HttpResponse
+
+def password(request):
+    form = request.POST
+    return HttpResponse(KEY) if check_password(form) else HttpResponse("invalid password")
+
+def check_password(form):
+    return form['password'] == PASSWORD
+
+def check_key(form):
+    return form['password'] == KEY
+
+
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
@@ -112,15 +126,19 @@ class QuestionManageApiView(ListAPIView):
     def post(self, request, format=None):
         form = request.POST
         form._mutable = True
-        mode = form['mode']
+        mode = int(form['mode'])
         form.pop('mode')
-        if mode == '0':
+
+        # mode 0 : add
+        #      1 : change into topic
+        #      2 : delete
+
+        if not mode:
             if form['category'] in topic_categories:
                 serializer = self.serializer_class(data=form)
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
             else:
-                return Response("category isn't in %s" % topic_categories, status=status.HTTP_400_BAD_REQUEST)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
