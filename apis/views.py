@@ -11,7 +11,7 @@ class Password(ListAPIView):
         return HttpResponse(KEY) if self.check_password(form) else HttpResponse("invalid password")
 
     def check_password(self, form):
-        return form.get('pass') == PASSWORD
+        return form['password'] == PASSWORD
 
     def check_key(self, form):
         return form['password'] == KEY
