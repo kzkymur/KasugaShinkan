@@ -1,5 +1,5 @@
 from .PASS import PASSWORD, KEY
-from django.http import HttpResponse
+from django.http import JsonResponse
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 class Password(ListAPIView):
@@ -8,13 +8,20 @@ class Password(ListAPIView):
 
     def post(self, request, format=None):
         form = request.POST
-        return HttpResponse(KEY) if self.check_password(form) else HttpResponse("invalid password")
+        if self.check_password(form):
+            return_json = {
+                'result': True,
+                'password': KEY,
+            }
+        else:
+            return_json = {'result': False}
+        return JsonResponse(return_json)
 
     def check_password(self, form):
         return form['password'] == PASSWORD
 
-    def check_key(self, form):
-        return form['password'] == KEY
+def check_key(form):
+    return form['key'] == KEY
 
 
 from rest_framework import status
@@ -69,29 +76,33 @@ class TopicManageApiView(ListAPIView):
         form = request.POST
         form._mutable = True
 
-        if form['category'] == 'edit':
-            serched_topic = serch_object_from_model(self.model, form, self.filtering_elements_at_edit)
-            if isinstance(serched_topic, Response):
-                return serched_topic
-            else:
-                title = serched_topic.title
-                if form['main'] == 'delete':
-                    serched_topic.delete()
-                    return Response("topic '%s' has deleted" % title, status=status.HTTP_201_CREATED)
+        if check_key(form):
+            form.pop('key')
+            if form['category'] == 'edit':
+                serched_topic = serch_object_from_model(self.model, form, self.filtering_elements_at_edit)
+                if isinstance(serched_topic, Response):
+                    return serched_topic
                 else:
-                    serched_topic.main = form['main']
-                    serched_topic.updated_at = datetime.datetime.now()
-                    serched_topic.save()
-                    return Response("topic '%s' has updated" % title, status=status.HTTP_201_CREATED)
+                    title = serched_topic.title
+                    if form['main'] == 'delete':
+                        serched_topic.delete()
+                        return Response("topic '%s' has deleted" % title, status=status.HTTP_201_CREATED)
+                    else:
+                        serched_topic.main = form['main']
+                        serched_topic.updated_at = datetime.datetime.now()
+                        serched_topic.save()
+                        return Response("topic '%s' has updated" % title, status=status.HTTP_201_CREATED)
 
-        elif form['category'] in topic_categories:
-            serializer = self.serializer_class(data=form)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response("category isn't in %s" % topic_categories, status=status.HTTP_400_BAD_REQUEST)
+            elif form['category'] in topic_categories:
+                serializer = self.serializer_class(data=form)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response("category isn't in %s" % topic_categories, status=status.HTTP_400_BAD_REQUEST)
+        else: 
+            return Response("key is invalid" , status=status.HTTP_400_BAD_REQUEST)
 
 
 
