@@ -102,17 +102,17 @@ class TopicManageApiView(ListAPIView):
                         return Response("topic '%s' has updated" % title, status=status.HTTP_201_CREATED)
 
             elif form['category'] in topic_categories:
-                return Response(form, status=status.HTTP_400_BAD_REQUEST)
-                # if 'question_main' in form:
-                #     # question.main と topic.main は異なるのでそこの修正
-                #     question_form = {'main':form['question_main']}
-                #     QuestionManageApiView().delete(question_form)
-                #     form.pop('question_main')
-                # serializer = self.serializer_class(data=form)
-                # if serializer.is_valid():
-                #     serializer.save()
-                #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-                # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                if 'question_main' in form:
+                    # question.main と topic.main は異なるのでそこの修正
+                    question_form = {'main':form['question_main']}
+                    QuestionManageApiView().delete(question_form)
+                    form.pop('question_main')
+                serializer = self.serializer_class(data=form)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response("category isn't in %s" % topic_categories, status=status.HTTP_400_BAD_REQUEST)
         else: 
