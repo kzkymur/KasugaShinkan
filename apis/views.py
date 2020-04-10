@@ -104,7 +104,7 @@ class TopicManageApiView(ListAPIView):
             elif form['category'] in topic_categories:
                 if 'question_main' in form:
                     # question.main と topic.main は異なるのでそこの修正
-                    question_form = {'title':form['question_main'], 'main':form['question_main']}
+                    question_form = {'main':form['question_main']}
                     QuestionManageApiView().delete(question_form)
                     form.pop('question_main')
                 serializer = self.serializer_class(data=form)
@@ -183,7 +183,7 @@ class QuestionManageApiView(ListAPIView):
         if isinstance(serched_question, Response):
             return serched_question
         else:
-            title = serched_question.title
+            main = serched_question.main
             serched_question.delete()
-            return Response("topic '%s' has deleted" % title, status=status.HTTP_201_CREATED)
+            return Response("topic '%s' has deleted" % main, status=status.HTTP_201_CREATED)
             
