@@ -104,7 +104,7 @@ class TopicManageApiView(ListAPIView):
             elif form['category'] in topic_categories:
                 if 'question_main' in form:
                     # question.main と topic.main は異なるのでそこの修正
-                    question_form = {'main':form['question_main']}
+                    question_form = {'title':form['question_main'], 'main':form['question_main']}
                     QuestionManageApiView().delete(question_form)
                     form.pop('question_main')
                 serializer = self.serializer_class(data=form)
