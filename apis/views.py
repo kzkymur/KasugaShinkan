@@ -23,6 +23,9 @@ class Password(ListAPIView):
 def check_key(form):
     return form['key'] == KEY
 
+def get_all_objects(model):
+    return model.objects.all()
+
 
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -39,6 +42,7 @@ import datetime
 
 topic_categories = ['大学', '生活', '先輩']
 
+
 class TopicApiView(ListAPIView):
     model = Topic
     permission_classes = (AllowAny, )
@@ -48,7 +52,7 @@ class TopicApiView(ListAPIView):
     filtering_elements_at_serch = ['title']
 
     def get(self, request, format=None):
-        all_objs = self.model.objects.all()
+        all_objs = get_all_objects(self.model)
         serialized_objs = self.serializer_class(all_objs, many=True)
         return Response(serialized_objs.data)
 
@@ -88,12 +92,21 @@ class TopicManageApiView(ListAPIView):
                         serched_topic.delete()
                         return Response("topic '%s' has deleted" % title, status=status.HTTP_201_CREATED)
                     else:
-                        serched_topic.main = form['main']
+                        # main, youtube_link は undefined なら変更なし
+                        if form['main']:
+                            serched_topic.main = form['main']
+                        if form['youtube_link']:
+                            serched_topic.youtube_link = form['youtube_link']
                         serched_topic.updated_at = datetime.datetime.now()
                         serched_topic.save()
                         return Response("topic '%s' has updated" % title, status=status.HTTP_201_CREATED)
 
             elif form['category'] in topic_categories:
+                if hasattr(form, 'question_main'):
+                    # question.main と topic.main は異なるのでそこの修正
+                    question_form = {'main':form['question_main']}
+                    QuestionManageApiView().delete(question_form)
+                    form.pop('question_main')
                 serializer = self.serializer_class(data=form)
                 if serializer.is_valid():
                     serializer.save()
@@ -115,7 +128,7 @@ class QuestionApiView(ListAPIView):
     filtering_elements_at_serch = ['category']
 
     def get(self, request, format=None):
-        all_objs = self.model.objects.all()
+        all_objs = get_all_objects(self.model)
         serialized_objs = self.serializer_class(all_objs, many=True)
         return Response(serialized_objs.data)
 
@@ -127,13 +140,14 @@ class QuestionApiView(ListAPIView):
             serialized_objs = self.serializer_class(serched_objs)
             return Response(serialized_objs.data)
 
+
 class QuestionManageApiView(ListAPIView):
     model = Question
     permission_classes = (AllowAny, )
     renderer_classes = (ResponseRenderer, )
     serializer_class = QuestionSerializer
 
-    filtering_elements_at_edit = ['title', 'author']
+    filtering_elements_at_del = ['main']
 
     def get(self, request):
         return Response("this api can't accept GET request", status=status.HTTP_400_BAD_REQUEST)
@@ -145,10 +159,14 @@ class QuestionManageApiView(ListAPIView):
         form.pop('mode')
 
         # mode 0 : add
-        #      1 : change into topic
-        #      2 : delete
+        #      1 : delete
 
-        if not mode:
+        if mode:
+            if check_key(form):
+                return self.delete(form)
+            else:
+                Response("key is invalid" , status=status.HTTP_400_BAD_REQUEST)
+        else:
             if form['category'] in topic_categories:
                 serializer = self.serializer_class(data=form)
                 if serializer.is_valid():
@@ -156,4 +174,13 @@ class QuestionManageApiView(ListAPIView):
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
+    def delete(self, form):
+        serched_question = serch_object_from_model(self.model, form, self.filtering_elements_at_del)
+        if isinstance(serched_question, Response):
+            return serched_question
+        else:
+            title = serched_question.title
+            serched_question.delete()
+            return Response("topic '%s' has deleted" % title, status=status.HTTP_201_CREATED)
+            
