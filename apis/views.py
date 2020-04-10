@@ -105,8 +105,8 @@ class TopicManageApiView(ListAPIView):
                 if 'question_main' in form:
                     # question.main と topic.main は異なるのでそこの修正
                     question_form = {'main':form['question_main']}
-                    QuestionManageApiView().delete(question_form)
-                    form.pop('question_main')
+                    return QuestionManageApiView().delete(question_form)
+                    #form.pop('question_main')
                 serializer = self.serializer_class(data=form)
                 if serializer.is_valid():
                     serializer.save()
