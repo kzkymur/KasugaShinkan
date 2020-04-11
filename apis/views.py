@@ -167,8 +167,8 @@ class QuestionManageApiView(ListAPIView):
             if check_key(form):
                 if 'main' in form:
                     delete_responses = []
-                    print(json.load(form['main']))
-                    for question in json.load(form['main']):
+                    print(json.loads(form['main']))
+                    for question in json.loads(form['main']):
                         delete_responses.append(self.delete(question))
                     return delete_responses
                 else: 
