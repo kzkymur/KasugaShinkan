@@ -164,7 +164,13 @@ class QuestionManageApiView(ListAPIView):
 
         if mode:
             if check_key(form):
-                return self.delete(form)
+                if 'delete_questions' in form:
+                    delete_responses = []
+                    for question in form['delete_questions']:
+                        delete_responses.append(self.delete(question))
+                    return delete_responses
+                else: 
+                    return self.delete(form)
             else:
                 return Response("key is invalid" , status=status.HTTP_400_BAD_REQUEST)
         else:
