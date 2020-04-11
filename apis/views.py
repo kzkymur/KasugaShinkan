@@ -169,9 +169,8 @@ class QuestionManageApiView(ListAPIView):
                     delete_responses = []
                     questions = json.loads(form['main'])
                     for question in questions:
-                        print(questions)
                         delete_responses.append(self.delete(question))
-                    return Response(delete_responses, status=status.HTTP_201_CREATED)
+                    return Response('questions deleted', status=status.HTTP_201_CREATED)
                 else: 
                     return self.delete(form)
             else:
