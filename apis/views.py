@@ -38,6 +38,7 @@ from .serializers import TopicSerializer, QuestionSerializer
 from .utils import serch_object_from_model, serch_objects_from_model
 
 import datetime
+import json
 
 
 topic_categories = ['大学', '生活', '先輩']
@@ -163,10 +164,11 @@ class QuestionManageApiView(ListAPIView):
         #      1 : delete
 
         if mode:
+            print(form)
             if check_key(form):
                 if 'main' in form:
                     delete_responses = []
-                    for question in form.getlist('main'):
+                    for question in json.load(form['main']):
                         print(question)
                         delete_responses.append(self.delete(question))
                     return delete_responses
