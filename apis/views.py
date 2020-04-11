@@ -163,10 +163,11 @@ class QuestionManageApiView(ListAPIView):
         #      1 : delete
 
         if mode:
+            print(form)
             if check_key(form):
-                if 'delete_questions' in form:
+                if 'main' in form:
                     delete_responses = []
-                    for question in form['delete_questions']:
+                    for question in form['main']:
                         delete_responses.append(self.delete(question))
                     return delete_responses
                 else: 

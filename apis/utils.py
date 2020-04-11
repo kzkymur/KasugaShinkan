@@ -16,4 +16,4 @@ def serch_objects_from_model(model, form, filtering_elements):
         except:
             return Response("request doesn't have %s vlaue" % elem, status=status.HTTP_400_BAD_REQUEST)
     serched_topics = model.objects.filter(**filtering_args)
-    return serched_topics if len(serched_topics) else Response("request form doesn't match any topics", status=status.HTTP_400_BAD_REQUEST)
+    return serched_topics if len(serched_topics) else Response("request form doesn't match any mdels", status=status.HTTP_400_BAD_REQUEST)
