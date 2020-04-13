@@ -4,6 +4,7 @@ from django.db import models
 class Topic(models.Model):
     title = models.CharField(max_length=50)
     category = models.CharField(max_length=10)
+    cluster = models.IntegerField(blank=True)
     main = models.TextField()
     author = models.CharField(max_length=10)
     youtube_link = models.URLField(blank=True)

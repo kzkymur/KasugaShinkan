@@ -16,6 +16,9 @@ class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic
         fields='__all__' 
+        extra_kwargs = {
+            'author' : {'write_only': True},
+        }
 
 class QuestionSerializer(serializers.ModelSerializer):
     model = Question
