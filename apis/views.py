@@ -33,7 +33,7 @@ from rest_framework.response import Response
 
 from .models import Topic, Question
 from .renderers import TopicJSONRenderer, QuestionJSONRenderer, ResponseRenderer
-from .serializers import TopicSerializer, QuestionSerializer
+from .serializers import TopicSerializer, TopicRetrieveSerializer, QuestionSerializer
 
 from .utils import serch_object_from_model, serch_objects_from_model
 
@@ -48,7 +48,7 @@ class TopicApiView(ListAPIView):
     model = Topic
     permission_classes = (AllowAny, )
     renderer_classes = (TopicJSONRenderer, )
-    serializer_class = TopicSerializer
+    serializer_class = TopicRetrieveSerializer
 
     filtering_elements_at_serch = ['title']
 
