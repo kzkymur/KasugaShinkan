@@ -7,6 +7,7 @@ class Topic(models.Model):
     cluster = models.IntegerField(blank=True)
     main = models.TextField()
     author = models.CharField(max_length=10)
+    # tag = models.CharField(blank=True)
     youtube_link = models.URLField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
@@ -21,3 +22,9 @@ class Question(models.Model):
 
     class Meta:
         ordering = ('created_at',)
+
+class Tag(models.Model):
+    tag = models.CharField(max_length=10)
+
+    class Meta:
+        ordering = ('created_at')

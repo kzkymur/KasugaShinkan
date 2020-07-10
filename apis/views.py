@@ -48,13 +48,14 @@ class TopicApiView(ListAPIView):
     model = Topic
     permission_classes = (AllowAny, )
     renderer_classes = (TopicJSONRenderer, )
-    serializer_class = TopicRetrieveSerializer
+    get_serializer_class = TopicRetrieveSerializer
+    post_serializer_class = TopicSerializer
 
     filtering_elements_at_serch = ['title']
 
     def get(self, request, format=None):
         all_objs = get_all_objects(self.model)
-        serialized_objs = self.serializer_class(all_objs, many=True)
+        serialized_objs = self.get_serializer_class(all_objs, many=True)
         return Response(serialized_objs.data)
 
     def post(self, request, format=None):
@@ -62,7 +63,7 @@ class TopicApiView(ListAPIView):
         if isinstance(serched_obj, Response):
             return serched_obj
         else:
-            serialized_obj = self.serializer_class(serched_obj)
+            serialized_obj = self.post_serializer_class(serched_obj)
             return Response(serialized_obj.data)
 
 
@@ -108,6 +109,7 @@ class TopicManageApiView(ListAPIView):
                     question_form = {'main':form['question_main']}
                     QuestionManageApiView().delete(question_form)
                     form.pop('question_main')
+                form['cluster'] = 0
                 serializer = self.serializer_class(data=form)
                 if serializer.is_valid():
                     serializer.save()
